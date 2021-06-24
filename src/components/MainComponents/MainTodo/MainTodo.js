@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import {
-  View, Text, TextInput, ScrollView,
-} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TextInput, ScrollView} from 'react-native';
 
 import axios from 'axios';
 
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import MainTodoStyles from './MainTodoStyles';
 
 import MainToDoButton from '../MainTodoButton/MainToDoButton';
@@ -15,7 +13,7 @@ import {
   UPDATE_TODO_HANDLER,
 } from '../../../redux/todo/actions';
 
-const MainTodo = ({ item }) => {
+const MainTodo = ({item}) => {
   const {
     description,
     _id,
@@ -27,22 +25,24 @@ const MainTodo = ({ item }) => {
     assignedTo,
   } = item.item;
   const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.todo.userInfo);
+  const userInfo = useSelector(state => state.todo.userInfo);
 
   const [editStatus, setEditStatus] = useState(false);
   const [newText, setNewText] = useState('');
 
   const updateToDoDesc = () => {
-    axios
-      .put('http://0.0.0.0:9000/todo/update_todo', {
-        id: _id,
-        description: newText,
-        updatedAt: new Date().toISOString().split('T')[0],
-      })
-      .then(() => {
-        dispatch(UPDATE_TODO_HANDLER(_id, newText));
-        setEditStatus(false);
-      });
+    if (newText) {
+      axios
+        .put('http://0.0.0.0:9000/todo/update_todo', {
+          id: _id,
+          description: newText,
+          updatedAt: new Date().toISOString().split('T')[0],
+        })
+        .then(() => {
+          dispatch(UPDATE_TODO_HANDLER(_id, newText));
+          setEditStatus(false);
+        });
+    }
   };
 
   const removeToDoHandler = () => {
@@ -79,7 +79,7 @@ const MainTodo = ({ item }) => {
       )}
       {assignedTo.length > 0 && (
         <ScrollView horizontal>
-          {assignedTo.map((user) => (
+          {assignedTo.map(user => (
             <Text style={MainTodoStyles.UserText} key={user._id}>
               {user.name}
             </Text>
@@ -91,7 +91,7 @@ const MainTodo = ({ item }) => {
         <TextInput
           style={MainTodoStyles.EditInput}
           defaultValue={`${description}`}
-          onChangeText={(text) => setNewText(text)}
+          onChangeText={text => setNewText(text)}
           multiline
         />
       ) : (
@@ -105,10 +105,7 @@ const MainTodo = ({ item }) => {
         <View style={MainTodoStyles.ButtonsContainer}>
           {editStatus ? (
             <>
-              <MainToDoButton
-                onPress={() => updateToDoDesc()}
-                label="Submit"
-              />
+              <MainToDoButton onPress={() => updateToDoDesc()} label="Submit" />
               <MainToDoButton
                 onPress={() => setEditStatus(false)}
                 label="Cancel"
